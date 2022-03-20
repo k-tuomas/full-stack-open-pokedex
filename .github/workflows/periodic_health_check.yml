@@ -1,0 +1,17 @@
+on:
+  # schedule:
+  #   - cron:  '* * * * *'
+  push:
+    branches:
+      - master
+  
+  jobs:
+    test app url health:
+    runs-on: ubuntu-20.04
+    steps:
+    - name: Check the deployed service URL
+      uses: jtalk/url-health-check-action@v2
+      with:
+        url: https://calm-castle-06567.herokuapp.com/
+        max-attempts: 2
+        retry-delay: 5s 
