@@ -6,7 +6,7 @@ on:
       - master
   
 jobs:
-  test app url health:
+  test_app_url_health:
     runs-on: ubuntu-20.04
     steps:
       - name: Check the deployed service URL
