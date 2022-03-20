@@ -31,7 +31,6 @@ jobs:
       #     start: npm run start-prod
       #     wait-on: http://localhost:5000
       - name: 'deploy to heroku'
-        // join messages to check them all?
         if: ${{ github.event_name == 'push' || !contains(join(github.event.commits.*.message), '#skip') }}
         uses: akhileshns/heroku-deploy@v3.12.12
         with:
@@ -44,7 +43,6 @@ jobs:
 
   tag_release:      
     needs: [simple_deployment_pipeline]  
-    // join messages to check them all?
     if: ${{ github.event_name == 'push' || !contains(join(github.event.commits.*.message), '#skip') }}
     runs-on: ubuntu-20.04
     steps:
