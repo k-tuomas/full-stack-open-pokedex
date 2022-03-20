@@ -30,7 +30,7 @@ jobs:
       #     command: npm run test:e2e
       #     start: npm run start-prod
       #     wait-on: http://localhost:5000
-      - name: 'deploy to heroku'
+      - name: deploy to heroku
         if: ${{ github.event_name == 'push' || !contains(join(github.event.commits.*.message), '#skip') }}
         uses: akhileshns/heroku-deploy@v3.12.12
         with:
@@ -40,6 +40,23 @@ jobs:
           healthcheck: 'https://calm-castle-06567.herokuapp.com/health'
           checkstring: 'ok'
           rollbackonhealthcheckfailed: true
+      - name: notify discord on success
+        uses: rjstone/discord-webhook-notify@v1
+        if: ${{ success() }}
+        with:
+            severity: info
+            text: New version deployed
+            description:  to https://calm-castle-06567.herokuapp.com/
+            details: Test Succeeded!
+            webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}
+      - name: notify discord on failure
+        uses: rjstone/discord-webhook-notify@v1
+        if: ${{ failure() }}
+        with:
+            severity: error
+            text: Build failed
+            details: Test error!
+            webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}
 
   tag_release:      
     needs: [simple_deployment_pipeline]  
@@ -51,4 +68,6 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.TOKEN_GITHUB }}
           DEFAULT_BUMP: patch
-          DRY_RUN: true
+   
+
+    
