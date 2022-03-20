@@ -55,7 +55,6 @@ jobs:
         with:
             severity: error
             text: Build failed
-            details: Test error!
             webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}
 
   tag_release:      
