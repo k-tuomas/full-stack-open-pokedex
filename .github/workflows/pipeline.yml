@@ -30,14 +30,9 @@ jobs:
       #     command: npm run test:e2e
       #     start: npm run start-prod
       #     wait-on: http://localhost:5000
-      
-      - name: commit messages
-        env:
-          COMMIT_MESSAGES: ${{ toJson(github.event.commits.*.message) }}
-        run: echo "$COMMIT_MESSAGES"
-
       - name: 'deploy to heroku'
-        if: ${{ github.event_name == 'push' || !contains(github.event.head_commit.message, '#skip') }}
+        // join messages to check them all?
+        if: ${{ github.event_name == 'push' || !contains(join(github.event.commits.*.message), '#skip') }}
         uses: akhileshns/heroku-deploy@v3.12.12
         with:
           heroku_api_key: ${{secrets.HEROKU_API_KEY}}
@@ -46,9 +41,11 @@ jobs:
           healthcheck: 'https://calm-castle-06567.herokuapp.com/health'
           checkstring: 'ok'
           rollbackonhealthcheckfailed: true
+
   tag_release:      
     needs: [simple_deployment_pipeline]  
-    if: ${{ github.event_name == 'push' ||  !contains(github.event.head_commit.message, '#skip')}}
+    // join messages to check them all?
+    if: ${{ github.event_name == 'push' || !contains(join(github.event.commits.*.message), '#skip') }}
     runs-on: ubuntu-20.04
     steps:
       - name: Bump version and push tag
